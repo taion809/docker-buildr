@@ -1,0 +1,5 @@
+flask
+redis
+docker-py
+celery
+celery-with-redis
