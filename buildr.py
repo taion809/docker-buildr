@@ -41,9 +41,8 @@ def image_remove():
         flash("Empty image name")
     else:
         res = ec.remove_image(image)
+        flash("Removed image: %s" % image)
 
-    key = add_task(res)
-    flash("Task added: job:%s" % key)
 
     return redirect(url_for('show_images'))
 
@@ -54,9 +53,7 @@ def container_remove():
         flash("Empty container id")
     else:
         res = ec.remove_container(container)
-
-    key = add_task(res)
-    flash("Task added: job:%s" % key)
+        flash("Removed container: %s" % container)
 
     return redirect(url_for('show_containers'))
 
