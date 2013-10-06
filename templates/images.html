@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block body %}
+<form id='rem-form' class='form' action='/api/image/remove' method='post'>
+<input type='hidden' name='repo' value='' />
+<table class='table table-striped table-bordered table-hover'>
+    <thead>
+        <th>Repository</th>
+        <th>Tag</th>
+        <th>ID (Long)</th>
+        <th>Created</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+    {% for image in images %}
+        <tr>
+            {% if not image['Repository'] %}
+            <td> &lt;none&gt; </td>
+            {% else %}
+            <td>{{ image['Repository'] }}</td>
+            {% endif %}
+            {% if not image['tag'] %}
+            <td> &lt;none&gt; </td>
+            {% else %}
+            <td>{{ image['tag'] }}</td>
+            {% endif %}
+            <td>{{ image['Id'][0:11] }}</td>
+            <td>{{ image['Created'] }}</td>
+            {% if not image['Repository'] %}
+            <td></td>
+            {% else %}
+            <td>
+                <button class='btn btn-xs btn-danger btn-remove-image' href="#" type='button' rel="{{ image['Repository'] }}"> Remove</button>
+            </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</form>
+{% endblock %}
+{% block inline_javascript %}
+<script type='text/javascript'>
+    $(".btn-remove-image").click(function(){
+        var repo = $(this).attr('rel')
+        $(this).attr('disabled', 'disabled')
+
+        form = $("#rem-form");
+        $("input[name=repo]").val(repo)
+
+        form.submit()
+    })
+</script>
+{% endblock %}

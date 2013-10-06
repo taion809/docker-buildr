@@ -16,5 +16,13 @@ def build(repo, tag):
 def push(repository):
     return dc.push(repository)
 
+@celery.task(name='tasks.rmi')
+def rmi(repository):
+    return dc.remove_image(repository)
+
+@celery.task(name='tasks.rm')
+def rm(container):
+    return dc.remove_container(container)
+
 if __name__ == '__main__':
     celery.start()
