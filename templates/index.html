@@ -1,8 +1,25 @@
 {% extends "_layout.html" %}
 {% block body %}
-    <pre>
-        {% for entry, value in jobs %}
-        {{ value }}
+<table class='table table-striped table-bordered table-hover'>
+    <thead>
+	<th>ID</th>
+        <th>Job</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+	{% for idx, entry in jobs %}
+        {% for a, b in entry.iteritems() %}
+        {% if a %}
+		<tr>
+			<td>{{ idx }}</td>
+			<td>{{ a }}</td>
+			<td>{{ b['status'] }}</td>
+			<td></td>
+		</tr>
+        {% endif %}
         {% endfor %}
-    </pre>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

@@ -25,12 +25,21 @@ def add_task(r, job_id):
     return key
 
 def ret_tasks(r):
-    return r.lrange('job_list', 0, -1)
+#    return r.lrange('job_list', 0, -1)
+    job_list = r.lrange('job_list', 0, -1)
+    jobs = []
+    for j in job_list:
+        if j is not None:
+            print j
+            o = json.loads(r.get(j))
+            jobs.append({j: o})
+
+    return list(enumerate(jobs))
 
 @app.route('/')
 def show_index():
     jobs = ret_tasks(app.redis)
-
+    print jobs
     return render_template('index.html', jobs=jobs)
 
 @app.route('/images')
@@ -74,12 +83,11 @@ def container_remove():
 @app.route('/payload', methods=['POST'])
 def start_build():
     payload = json.loads(request.form['payload'])
+    
     if not payload:
         abort(400)
-    elif payload['repository']['name'] is not app.config['RS_REPO']:
-        abort(401)
 
-    res = build(app.config['RS_REPO_URL'], app.config['RS_TAG'])
+    res = build.delay(repo=app.config['RS_REPO_URL'], tag=app.config['RS_TAG'])
     key = add_task(app.redis, res)
     
     flash("Task added: job:%s" % key, 'info')

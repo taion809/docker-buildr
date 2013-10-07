@@ -12,7 +12,7 @@ dc = Client(base_url='unix://var/run/docker.sock', version='1.5')
 
 @celery.task(name='tasks.build')
 def build(repo, tag):
-    return dc.build(repo, tag)
+    return dc.build(path=repo, tag=tag)
 
 @celery.task(name='tasks.push')
 def push(repository):
