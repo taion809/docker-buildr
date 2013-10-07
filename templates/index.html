@@ -1,5 +1,6 @@
 {% extends "_layout.html" %}
 {% block body %}
+<h2>Jobs</h2>
 <table class='table table-striped table-bordered table-hover'>
     <thead>
 	<th>ID</th>
@@ -16,7 +17,7 @@
 			<td>{{ a }}</td>
 			<td>{{ b['status'] }}</td>
 			<td>
-                <a class='btn btn-xs btn-danger btn-remove-image' href="{{ url_for('show_details', job_id=idx) }}"> Remove</a>
+                <a class='btn btn-xs btn-info' href="{{ url_for('show_details', job_id=idx) }}"><span class='glyphicon glyphicon-stats'> Details</span></a>
             </td>
 		</tr>
         {% endif %}

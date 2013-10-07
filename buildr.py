@@ -1,3 +1,7 @@
+# Sorry to whomever may read this code,
+# I built this from midnight until morning so it's
+# fatigue driven development... :s
+
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 
@@ -25,12 +29,10 @@ def add_task(r, job_id):
     return key
 
 def ret_tasks(r, start=0, end=-1):
-#    return r.lrange('job_list', 0, -1)
     job_list = r.lrange('job_list', start, end)
     jobs = []
     for j in job_list:
         if j is not None:
-            print j
             o = json.loads(r.get(j))
             jobs.append({j: o})
 
@@ -39,14 +41,25 @@ def ret_tasks(r, start=0, end=-1):
 @app.route('/')
 def show_index():
     jobs = ret_tasks(app.redis)
-    print jobs
     return render_template('index.html', jobs=jobs)
 
 @app.route('/details/<int:job_id>')
 def show_details(job_id):
     job = ret_tasks(app.redis, job_id, job_id).pop()
 
-    return render_template('details.html', job=job)
+    j = job[1]
+    job_title = j.keys().pop()
+    job_details = j[j.keys().pop()]
+
+    job_result = []
+    for j in job_details['result']:
+	job_result.append(j.split('\n'))
+
+    return render_template('details.html', job_title=job_title, job_details=job_details, job_result=job_result)
+
+@app.route('/random')
+def show_random():
+    return render_template('random.html')
 
 @app.route('/images')
 def show_images():

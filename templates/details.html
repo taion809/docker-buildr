@@ -1,10 +1,34 @@
 {% extends "_layout.html" %}
 {% block body %}
-<div class="panel panel-default">
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Job Details</div>
+  <div class="panel-body">
+  <table class='table table-bordered'>
+  <tr>
+    <td><strong>Job:</strong></td><td>{{ job_title  }}</td>
+  </tr>
+  <tr>
+    <td><strong>Status:</strong></td><td>{{ job_details['status'] }}</td>
+  </tr>
+  </table>
+  </div>
+</div>
+<br />
+<div class="panel panel-primary">
   <!-- Default panel contents -->
   <div class="panel-heading">Job Results</div>
   <div class="panel-body">
-    <p>{{ job[job.keys()]['result'] }}</p>
+    <p>
+        {% for j in job_result %}
+	{% for k in j  %}
+    	    {{ k }}
+            {% if not loop.last %}
+                <br />
+            {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </p>
   </div>
 </div>
 {% endblock %}
