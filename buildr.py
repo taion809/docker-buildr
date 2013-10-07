@@ -24,9 +24,9 @@ def add_task(r, job_id):
     r.ltrim('job_list', 0, 99)
     return key
 
-def ret_tasks(r):
+def ret_tasks(r, start=0, end=-1):
 #    return r.lrange('job_list', 0, -1)
-    job_list = r.lrange('job_list', 0, -1)
+    job_list = r.lrange('job_list', start, end)
     jobs = []
     for j in job_list:
         if j is not None:
@@ -41,6 +41,12 @@ def show_index():
     jobs = ret_tasks(app.redis)
     print jobs
     return render_template('index.html', jobs=jobs)
+
+@app.route('/details/<int:job_id>')
+def show_details(job_id):
+    job = ret_tasks(app.redis, job_id, job_id).pop()
+
+    return render_template('details.html', job=job)
 
 @app.route('/images')
 def show_images():

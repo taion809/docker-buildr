@@ -1,0 +1,10 @@
+{% extends "_layout.html" %}
+{% block body %}
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Job Results</div>
+  <div class="panel-body">
+    <p>{{ job[job.keys()]['result'] }}</p>
+  </div>
+</div>
+{% endblock %}
