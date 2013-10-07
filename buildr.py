@@ -21,7 +21,7 @@ app.config.from_envvar('BUILDR_FLASK_CONFIG', silent=True)
 
 app.redis = redis.Redis('localhost')
 
-ec = Client(base_url='unix://var/run/docker.sock', version='1.5')
+ec = Client(base_url='http://127.0.0.1:9000', version='1.5')
 
 def add_task(r, job_id):
     key = r.lpush("job_list", 'celery-task-meta-%s' % job_id)

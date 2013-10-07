@@ -8,7 +8,7 @@ celery = Celery('tasks')
 
 celery.config_from_object('config.celery_settings')
 
-dc = Client(base_url='unix://var/run/docker.sock', version='1.5')
+dc = Client(base_url='http://127.0.0.1:9000', version='1.5')
 
 @celery.task(name='tasks.build')
 def build(repo, tag):
