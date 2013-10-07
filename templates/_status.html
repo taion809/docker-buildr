@@ -1,0 +1,30 @@
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+    {% if errors %}
+        {% for message in errors %}
+            <div class='alert alert-dismissable alert-danger'>
+                <button class='close' data-dismiss='alert' type='button'>x</button>
+                <strong>Message:</strong> {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% with info = get_flashed_messages(category_filter=["info"]) %}
+    {% if info %}
+        {% for message in info %}
+            <div class='alert alert-dismissable alert-info'>
+                <button class='close' data-dismiss='alert' type='button'>x</button>
+                <strong>Message:</strong> {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% with success = get_flashed_messages(category_filter=["success"]) %}
+    {% if success %}
+        {% for message in success %}
+            <div class='alert alert-dismissable alert-success'>
+                <button class='close' data-dismiss='alert' type='button'>x</button>
+                <strong>Message:</strong> {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
