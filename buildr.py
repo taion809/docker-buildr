@@ -8,21 +8,30 @@ from tasks import build, push
 import redis
 import json
 
-app = Flask(__name__)
-app.config.from_object('flask_config')
-app.config.from_envvar('BUILDR_CONFIG', silent=True)
+#import config
+import config.flask_settings
 
-r = redis.Redis('localhost')
+app = Flask(__name__)
+app.config.from_object('config.flask_settings')
+app.config.from_envvar('BUILDR_FLASK_CONFIG', silent=True)
+
+app.redis = redis.Redis('localhost')
 
 ec = Client(base_url='unix://var/run/docker.sock', version='1.5')
 
-def add_task(job_id):
-    key = r.rpush("job_list", 'celery-task-meta-%s' % job_id)
+def add_task(r, job_id):
+    key = r.lpush("job_list", 'celery-task-meta-%s' % job_id)
+    r.ltrim('job_list', 0, 99)
     return key
+
+def ret_tasks(r):
+    return r.lrange('job_list', 0, -1)
 
 @app.route('/')
 def show_index():
-    return render_template('index.html')
+    jobs = ret_tasks(app.redis)
+
+    return render_template('index.html', jobs=jobs)
 
 @app.route('/images')
 def show_images():
@@ -31,17 +40,22 @@ def show_images():
 
 @app.route('/containers')
 def show_containers():
-    containers = ec.containers(all=True)
+    req = request.args.get('all', '')
+    if req:
+        containers = ec.containers(all=True)
+    else:
+        containers = ec.containers(all=False)
+
     return render_template('containers.html', containers=containers)
 
 @app.route('/api/image/remove', methods=['POST'])
 def image_remove():
     image = request.form['repo']
     if not image:
-        flash("Empty image name")
+        flash("Empty image name", 'error')
     else:
         res = ec.remove_image(image)
-        flash("Removed image: %s" % image)
+        flash("Removed image: %s" % image, 'success')
 
 
     return redirect(url_for('show_images'))
@@ -50,10 +64,10 @@ def image_remove():
 def container_remove():
     container = request.form['cid']
     if not container:
-        flash("Empty container id")
+        flash("Empty container id", 'error')
     else:
         res = ec.remove_container(container)
-        flash("Removed container: %s" % container)
+        flash("Removed container: %s" % container, 'success')
 
     return redirect(url_for('show_containers'))
 
@@ -66,8 +80,9 @@ def start_build():
         abort(401)
 
     res = build(app.config['RS_REPO_URL'], app.config['RS_TAG'])
-    key = add_task(res)
-    flash("Task added: job:%s" % key)
+    key = add_task(app.redis, res)
+    
+    flash("Task added: job:%s" % key, 'info')
 
     return redirect(url_for('show_index'))
 

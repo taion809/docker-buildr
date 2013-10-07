@@ -2,9 +2,11 @@ from __future__ import absolute_import
 from celery import Celery
 from docker import Client
 
+import config.celery_settings
+
 celery = Celery('tasks')
 
-celery.config_from_object('celery_config')
+celery.config_from_object('config.celery_settings')
 
 dc = Client(base_url='unix://var/run/docker.sock', version='1.5')
 
